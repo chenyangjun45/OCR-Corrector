@@ -13,9 +13,10 @@ import numpy as np
 import warnings
 import os
 import logging
-
-from corrector.bert_modeling import modeling, tokenization
-
+import time
+# from corrector.bert_modeling import modeling, tokenization
+from bert_modeling import modeling, tokenization
+logger = logging.getLogger(__name__)
 warnings.filterwarnings("ignore")
 tf.logging.set_verbosity(tf.logging.ERROR)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -28,9 +29,13 @@ logging.basicConfig(level=logging.INFO,
 
 class MaskedLMConfig(object):
     max_seq_length = 64
+    prob_threshold = 0.9
+    similarity_threshold = 0.6
     vocab_file = "vocab.txt"
     bert_config_file = "bert_config.json"
-    init_checkpoint = "model/pre-trained/bert_model.ckpt"
+    # init_checkpoint = "model/pre-trained/bert_model.ckpt"
+    init_checkpoint = "/home/tkrobot/base_model/chinese_L-12_H-768_A-12/bert_model.ckpt"
+    # init_checkpoint = "/home/appadmin/workspace/tk_tf_model"
     char_meta_file = "data/char_meta.txt"
     topn = 3
     batch_size = 2
@@ -378,6 +383,7 @@ class MaskedLM(object):
         # load model
 
         self.model = self.load_model(config)
+        print("模型已加载")
         self.session.run(tf.global_variables_initializer())
 
         self.tokenizer = tokenization.FullTokenizer(vocab_file=config.vocab_file)
@@ -416,6 +422,7 @@ class MaskedLM(object):
         probs_stream = []
         batch_error_num = []
         error_num = []
+        start_1 = time.time()
         while True:
             batch = self.data_processor.next()
             if batch is not None:
@@ -429,7 +436,8 @@ class MaskedLM(object):
 
             else:
                 break
-
+        end_1 = time.time()
+        logger.info("self.model.topn_predict的耗时：" + str(end_1 - start_1))
         result = []
         start = 0
 

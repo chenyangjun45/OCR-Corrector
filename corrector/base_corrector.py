@@ -10,7 +10,8 @@
 import re
 from abc import ABCMeta, abstractmethod
 import logging
-from corrector.utils.char_sim import CharFuncs
+# from corrector.utils.char_sim import CharFuncs
+from utils.char_sim import CharFuncs
 
 logger = logging.getLogger(__name__)
 
@@ -108,8 +109,8 @@ class BaseCorrector(metaclass=ABCMeta):
 
     def find_err_pos_by_prob(self, prob):
         """
-        >>> cr = BaseCorrector(correctorConfig)
-        >>> cr.find_err_pos_by_prob([0.99,0.85,1.00,0.77])
+        # >>> cr = BaseCorrector(correctorConfig)
+        # >>> cr.find_err_pos_by_prob([0.99,0.85,1.00,0.77])
         '[1,3]'
         """
         if not prob:
